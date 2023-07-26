@@ -1,0 +1,88 @@
+<div class="flex justify-center ">
+<form [formGroup]="loanForm" id="loanForm" class="space-y-4" (submit)="generateLoanSchedule($event)">
+    <div>
+        <label for="loanAmount" class="block font-medium">Load Amount (EUR):</label>
+        <input formControlName="loanAmount" type="number" id="loanAmount" name="loanAmount" min="5000" max="50000" step="100"
+            class="w-full mt-1 rounded-md border-gray-300 focus:border-2 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border-2"
+            required>
+            <div *ngIf="loanForm.get('loanAmount')?.invalid && loanForm.get('loanAmount')?.touched" class="text-red-500">
+                Loan amount must be between 5000 and 50000 EUR.
+              </div>
+    </div>
+
+    <div>
+        <label for="yearlyInterest" class="block font-medium">Yearly Interest (%):</label>
+        <input formControlName="yearlyInterest" type="number" id="yearlyInterest" name="yearlyInterest" min="1" max="100" step="0.1"
+            class="w-full mt-1 rounded-md border-gray-300 focus:border-2 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border-2"
+            required>
+            <div  *ngIf="loanForm.get('yearlyInterest')?.invalid && loanForm.get('yearlyInterest')?.touched"
+            class="text-red-500">
+            Yearly interest must be between 1 and 100%.
+          </div>
+    </div>
+
+    <div>
+        <label for="term" class="block font-medium">Term (months):</label>
+        <input formControlName="term" type="number" id="term" name="term" min="1" max="120"
+            class="w-full mt-1 rounded-md border-gray-300 focus:border-2 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border-2"
+            required>
+            <div *ngIf="loanForm.get('term')?.invalid && loanForm.get('term')?.touched" class="text-red-500" class="text-red-500">
+                Term must be between 1 and 12 months.
+              </div>
+    </div>
+
+    <div>
+        <label for="repaymentType" class="block font-medium">Repayment Type:</label>
+        <select formControlName="repaymentType" id="repaymentType" name="repaymentType"
+            class="w-full mt-1 rounded-md border-gray-300 focus:border-2 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border-2"
+            required>
+            <option value="annuity">Annuity</option>
+        </select>
+    </div>
+
+    <div>
+        <button type="submit"
+            class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 " [disabled]="loanForm.invalid">
+            Generate Schedule
+        </button>
+        <div *ngIf="loanForm.invalid && loanForm.touched" class="text-red-500 mt-2">
+            Please enter valid loan details.
+          </div>
+    </div>
+</form>
+</div>
+
+
+<div class="loan-schedule-table" *ngIf="loanSchedule.length > 0" class="mt-8">
+    <h3 class="text-lg font-bold">Loan Schedule</h3>
+    <table class="w-full mt-4">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">Month</th>
+          <th class="px-4 py-2">Remaining Amount (EUR)</th>
+          <th class="px-4 py-2">Interest Payment (EUR)</th>
+          <th class="px-4 py-2">Principal Payment (EUR)</th>
+          <th class="px-4 py-2">Total Payment (EUR)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of loanSchedule">
+          <td class="border px-4 py-2">{{ entry.month }}</td>
+          <td class="border px-4 py-2">{{ entry.remainingAmount.toFixed(2) }}</td>
+          <td class="border px-4 py-2">{{ entry.interestPayment.toFixed(2) }}</td>
+          <td class="border px-4 py-2">{{ entry.principalPayment.toFixed(2) }}</td>
+          <td class="border px-4 py-2">{{ entry.totalPayment.toFixed(2) }}</td>
+        </tr>
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <td class="border px-4 py-2">Total:</td>
+          <td class="border px-4 py-2"></td>
+          <td class="border px-4 py-2">{{ loanSchedule[loanSchedule.length - 1].totalInterest.toFixed(2) }}</td>
+          <td class="border px-4 py-2">{{ loanSchedule[loanSchedule.length - 1].totalPrincipal.toFixed(2) }}</td>
+          <td class="border px-4 py-2">{{ loanSchedule[loanSchedule.length - 1].totalPayments.toFixed(2) }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
